@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage [utf8] {inputenc}
+\usepackage [T2A] {fontenc}
+\usepackage{ amssymb }
+\usepackage{ alltt }
+\usepackage{ amsmath }
+\usepackage{ tikz }
+\usepackage{neuralnetwork}
+\usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
+\title{Машинное обучение \\
+Теоретическое задание №1}
+\author{Никонова Юлия}
+\date{}
+\begin{document}
+\maketitle
+\textbf{Задача 1.} Стоит отдать предпочтение первому алгоритму(наивный байесовский классификатор), так как во втором случае, скорее всего, имело место переобучение, то есть сотрудник получил алгоритм, лучше всего подходящий именно для этой тестовой выборки, а не дающий более хорошее качество в среднем.
+
+\textbf{Задача 2.}
+
+\tikzstyle{block} = [circle, draw, fill=blue!20, text centered, inner sep=2pt]
+\begin{tikzpicture}[node distance = 2cm, auto]
+\begin{scope}[start chain=1]
+\node[on chain=1] at (0,1.5cm) 
+  (x1) {$x_1$};
+\node[on chain=1,join=by o-latex] 
+  (w1_1) {$-1$};
+\end{scope}
+\begin{scope}[start chain=2]
+\node[on chain=2] at (0,0) 
+  (x2) {$x_2$};
+\node[on chain=2,join=by o-latex] 
+  (w2_1) {$-1$};
+\node[block, on chain=2,join=by o-latex] 
+  (sigma1) {$\Sigma$};
+\end{scope}
+\begin{scope}[start chain=3]
+\node[on chain=3] at (0,-1.5cm) 
+  (x3) {$x_3$};
+\node[on chain=3,join=by o-latex] 
+  (w3_2) {$-1$};
+\node[block, on chain=3,join=by o-latex] 
+  (sigma2) {$\Sigma$};
+\end{scope}
+\begin{scope}[start chain=4]
+\node[on chain=4] at (0,3cm) 
+  (const) {$1$}
+\node[on chain=4,join=by o-latex] 
+  (w4_1) {$-1$};
+\end{scope}
+\end{tikzpicture}
+\end{document}
