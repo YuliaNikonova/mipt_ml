@@ -6,6 +6,7 @@
 \usepackage{ amsmath }
 \usepackage{ tikz }
 \usepackage{neuralnetwork}
+\usepackage[linesnumbered,boxed]{ algorithm2e }
 \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
 \title{Машинное обучение \\
 Теоретическое задание №1}
@@ -14,38 +15,112 @@
 \begin{document}
 \maketitle
 \textbf{Задача 1.} Стоит отдать предпочтение первому алгоритму(наивный байесовский классификатор), так как во втором случае, скорее всего, имело место переобучение, то есть сотрудник получил алгоритм, лучше всего подходящий именно для этой тестовой выборки, а не дающий более хорошее качество в среднем.
-
+\newline
 \textbf{Задача 2.}
-
-\tikzstyle{block} = [circle, draw, fill=blue!20, text centered, inner sep=2pt]
+Формула для оценки $leave-one-out$:
+\begin{equation*}
+loo = \frac{1}{l} \sum_{j \in B_{r(x_i)} \setminus i}
+y_j \, - \, y_i)^2 = \frac{1}{l} \sum_{i=1}^{l}(\frac{1}{n_{r(x_i)}-1})^2(\sum_{j \in B_{r(x_i)} \setminus i} y_j \, - \, y_i)^2
+\end{equation*}
+\begin{equation*}
+(\sum_{j \in B_{r(x_i)} \setminus i} y_j \, - \, y_i)^2 = (\sum_{j \in B_{r(x_i)} \setminus i} y_j)^2 \, - \, 2 \sum_{j \in B_{r(x_i)} \setminus i} y_j \cdot y_i \, + \, y_i^2
+= ( \sum_{j \in B_{r(x_i)}} y_j - y_i)^2 - 2 (\sum_{j \in B_{r(x_i)} } y_j -y_i) \cdot y_i \, + \, y_i^2
+\end{equation*}
+Таким образом, 
+\begin{equation*}
+loo = \frac{1}{l} \sum_{i=1}^{l}\frac{1}{n_{r(x_i)}-1} [( \sum_{j \in B_{r(x_i)}} y_j - y_i)^2 - 2 (\sum_{j \in B_{r(x_i)} } y_j -y_i) \cdot y_i] + \sum_{i=1}^{l}(\frac{1}{n_{r(x_i)}-1} y_i^2)
+\end{equation*}
+Докажем, что вычисление этой формулы требует не более $O(l)$ операций.
+Очевидно, что $\sum_{i=1}^{l}(\frac{1}{n_{r(x_i)}-1} y_i^2)$ считается за $O(l)$.
+Введем переменные 
+\begin{equation*}
+Y_m= \sum_{j \in B_m } y_j, \, m \in \{ r(x_i), \, 1 \leqslant i \leqslant l \}
+\end{equation*}
+Очевидно, что отношение принадлежности к $B_m$ разбивает множество $[1, \cdots, l ]$ на классы эквивалентности.
+\newline
+Рассмотрим следующий алгоритм:
+\newline
+\begin{algorithm}[H]
+\SetAlgoNoLine
+\For{$i \leftarrow 1$ \KwTo $l$}{
+\eIf{$defined(Y_{r(x_i)})$}{
+continue\;
+}{
+$Y_{r(x_i)} \leftarrow 0$ \;
+\ForEach{element $j \in B_{r(x_i)} $}
+{$Y_{r(x_i)} \leftarrow Y_{r(x_i)} + y_j$}
+}
+}
+\caption{Preprocessing}
+\end{algorithm}
+Каждый элемент мы прибавляем к какой-либо $Y_m$ не более одного раза, значит сложность подобного алгоритма ~--- $O(l)$.
+\newline
+Теперь мы можем записать оценку так:
+\begin{equation*}
+loo =  \frac{1}{l} \sum_{i=1}^{l}\frac{1}{n_{r(x_i)}-1} [( Y_{r(x_i)} - y_i)^2 - 2 (Y_{r(x_i)} -y_i) \cdot y_i] + \sum_{i=1}^{l}(\frac{1}{n_{r(x_i)}-1} y_i^2)
+\end{equation*}
+Так как все $Y_{r(x_i)}$ заранее посчитаны за $O(l)$, вычисление этой формулы потребует $O(l)$ операций.
+Значит, мы можем посчитать оценку $leave-one-out$ за $O(l)$.
+\newline
+\textbf{Задача 3.}
+\newline
+\tikzstyle{sigma} = [rectangle, draw, font=\Huge, text centered, inner sep=2pt]
 \begin{tikzpicture}[node distance = 2cm, auto]
-\begin{scope}[start chain=1]
-\node[on chain=1] at (0,1.5cm) 
+\begin{scope}
+\node at (0,3cm) 
   (x1) {$x_1$};
-\node[on chain=1,join=by o-latex] 
-  (w1_1) {$-1$};
-\end{scope}
-\begin{scope}[start chain=2]
-\node[on chain=2] at (0,0) 
+\node at (2, 3cm)
+  (w1_1) {$1$};
+\node at (2, 2cm)
+  (w1_2) {$-1$};
+\node at (0,1cm)
   (x2) {$x_2$};
-\node[on chain=2,join=by o-latex] 
-  (w2_1) {$-1$};
-\node[block, on chain=2,join=by o-latex] 
-  (sigma1) {$\Sigma$};
-\end{scope}
-\begin{scope}[start chain=3]
-\node[on chain=3] at (0,-1.5cm) 
+\node at (2,1cm)
+  (w2) {$1$};
+\node at (0,-1cm) 
   (x3) {$x_3$};
-\node[on chain=3,join=by o-latex] 
-  (w3_2) {$-1$};
-\node[block, on chain=3,join=by o-latex] 
+\node at (2, 0cm)
+  (w3_1) {$1$};
+\node at (2,-1cm)
+  (w3_2) {$1$};
+\node at (0,-3cm)
+  (x4) {$1$};
+\node at (2,-2cm)
+  (w4) {$\frac{1}{2}$};
+\node[sigma] at (4,1cm)
+  (sigma1) {$\Sigma$};
+\node at (6,1cm)
+  (s1) {$1$};
+\node[sigma] at (4,-1cm)
   (sigma2) {$\Sigma$};
+\node at (6,-1cm)
+  (s2) {$1$};
+\node at (6,-3cm)
+  (w4_3) {$-1$};
+\node[sigma] at (8, 0cm)
+  (sigma3) {$\Sigma$};
+\node at (12, 0cm)
+  (formula) {$(\bar x_1 \vee x_3) \& (x_1 \vee x_2 \vee x_3)$};
 \end{scope}
-\begin{scope}[start chain=4]
-\node[on chain=4] at (0,3cm) 
-  (const) {$1$}
-\node[on chain=4,join=by o-latex] 
-  (w4_1) {$-1$};
-\end{scope}
+\draw[-latex] (x1) -- (w1_2);
+\draw[-latex] (x1) -- (w1_1);
+\draw[-latex] (x2) -- (w2);
+\draw[-latex] (x3) -- (w3_2);
+\draw[-latex] (x3) -- (w3_1);
+\draw[-latex] (x4) -- (w4);
+\draw[-latex] (x4) -- (w4_3);
+\draw[-latex] (w1_1) -- (sigma1);
+\draw[-latex] (w1_2) -- (sigma2);
+\draw[-latex] (w2) -- (sigma1);
+\draw[-latex] (w3_1) -- (sigma1);
+\draw[-latex] (w3_2) -- (sigma2);
+\draw[-latex] (w4) -- (sigma2);
+\draw[-latex] (sigma1) -- (s1);
+\draw[-latex] (sigma2) -- (s2);
+\draw[-latex] (s1) -- (sigma3);
+\draw[-latex] (s2) -- (sigma3);
+\draw[-latex] (w4_3) -- (sigma3);
+\draw[-latex] (sigma3) -- (formula);
 \end{tikzpicture}
+
 \end{document}
