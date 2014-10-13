@@ -1,12 +1,17 @@
 \documentclass{article}
 \usepackage [utf8] {inputenc}
 \usepackage [T2A] {fontenc}
+\usepackage[left=25mm, top=20mm, right=10mm, bottom=20mm, nohead, nofoot]{geometry}
 \usepackage{ amssymb }
 \usepackage{ alltt }
 \usepackage{ amsmath }
 \usepackage{ tikz }
 \usepackage{neuralnetwork}
+\usepackage{ dsfont }
+\usepackage{ amsthm }
+\usepackage{ mathtools }
 \usepackage[linesnumbered,boxed]{ algorithm2e }
+\newtheorem*{thm}{Теорема}
 \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
 \title{Машинное обучение \\
 Теоретическое задание №1}
@@ -122,5 +127,40 @@ loo =  \frac{1}{l} \sum_{i=1}^{l}\frac{1}{n_{r(x_i)}-1} [( Y_{r(x_i)} - y_i)^2 -
 \draw[-latex] (w4_3) -- (sigma3);
 \draw[-latex] (sigma3) -- (formula);
 \end{tikzpicture}
-
+\newline
+\textbf{Задача 4.}
+Фиксируем ответы произвольный набор $(y_i)_{i = 1}^{\ell}$. Хотим доказать, что $\exists (\gamma_i)_{i=1}^{N}$, удовлетворяющие следующей системе уравнений:
+\begin{equation}
+a(x_i)=sign(\sum_{n=1}^{N} \gamma_n b_n(x))=y_i, \, 1 \leqslant i \leqslant l
+\end{equation}
+Докажем, что $\exists (\gamma_i)_{i=1}^{\ell}$, удовлетворяющие  системе уравнений:
+\begin{equation}
+\sum_{n=1}^{\ell} \gamma_n b_n(x)=y_i, \, 1 \leqslant i \leqslant 
+\ell
+\end{equation}
+Если $(\gamma_i)_{i=1}^{\ell}$ удовлетоворяют системе $(2)$, то они удовлетворяют и системе $(1)$.
+Тогда мы можем записать систему $(2)$ в виде:
+\begin{equation}
+B \gamma = y, \, B=\{b_{ij}=b_j(x_i)\}_{i,j=1}^{\ell}
+\end{equation}
+Введем функцию $\varphi_i(x)=exp(-\beta || x_i -x||)$, $\varphi_{ij}=\varphi_j(x_i)$.
+Введем переменные $\tilde \gamma_i = \gamma_i y_i$. 
+Рассмотрим матрицу $\Phi=\{\varphi_{ij}\}_{i,j=1}^{\ell}$.
+Тогда система $(3)$ эквивалентна:
+\begin{equation}
+\Phi \tilde \gamma = y
+\end{equation}
+Очевидно, что если мы найдем $(\tilde \gamma_i)_{i = 1}^{\ell}$, удовлетворяющие системе $(3)$, то исходное утверждение доказано.
+Для существования таких $(\tilde \gamma_i)_{i = 1}^{\ell}$ достаточно, чтобы матрица $\Phi$ была невырожденная. 
+В была доказана следующая теорема.
+\begin{thm}[Мичелли]
+Пусть $\{x_i\}_{i=1}^{\ell}$ ~--- множество различных точек из $\mathds{R}^m$. Тогда матрица интерполяции $\tilde \Phi$ размерности $\ell \times \ell$ с элементами $\varphi_{ij} = \varphi(||x_i-x_j||)$ является невырожденной.
+\end{thm}
+Теорема Мичелли озватывает широкий класс радиальных базисных функций, в который входит и 
+$\varphi_i(x)=exp(-\beta || x_i -x||)$, все наши $(x_i)_{i = 1}^{\ell}$ различны, значит, и наша матрица $\Phi$ невырожденная. 
+\newline
+\textbf{Задача 4.}
+\begin{equation*}
+jjjj
+\end{equation*}
 \end{document}
